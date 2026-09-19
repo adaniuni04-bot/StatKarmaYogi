@@ -1,0 +1,3 @@
+# Robots.txt for StatKarmaYogi Platform
+User-agent: *
+Allow: /
