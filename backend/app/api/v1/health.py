@@ -8,11 +8,14 @@ router = APIRouter(tags=["Health & Readiness"])
 
 
 @router.get("/health")
+@router.get("/api/health")
+@router.get("/api/v1/health")
 def health_check():
     return {
         "status": "ok",
         "service": "India Official Statistical System Skill Intelligence Platform",
-        "environment": settings.ENVIRONMENT
+        "environment": settings.ENVIRONMENT,
+        "engine": "FastAPI Pure Python Backend"
     }
 
 
