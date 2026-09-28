@@ -167,7 +167,34 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
             detail="Incorrect email or password"
         )
 
-    access_token = create_access_token(subject=user.id, role=user.role)
+    user_data = {
+        "id": user.id,
+        "email": user.email,
+        "password_hash": user.password_hash,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "role": user.role,
+        "position": user.designation_name,
+        "field": user.industry_field,
+        "organization": user.organization,
+        "years_experience": user.years_experience,
+        "education": user.education,
+        "current_assignment": user.current_assignment,
+        "career_goal": user.career_goal,
+        "preferred_learning_style": user.preferred_learning_style,
+        "weekly_hours": user.weekly_hours,
+        "current_project_focus": user.current_project_focus,
+        "preferred_language": user.preferred_language,
+        "status": user.status,
+        "ai_profile": None
+    }
+    if user.ai_profile_json:
+        try:
+            user_data["ai_profile"] = json.loads(user.ai_profile_json)
+        except Exception:
+            pass
+
+    access_token = create_access_token(subject=user.id, role=user.role, user_data=user_data)
     log_audit_event(db, action="LOGIN", resource="User", actor_id=user.id, actor_email=user.email)
 
     user_skills = []
@@ -268,7 +295,28 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
     except Exception:
         pass
 
-    access_token = create_access_token(subject=new_user.id, role=new_user.role)
+    user_data = {
+        "id": new_user.id,
+        "email": new_user.email,
+        "password_hash": new_user.password_hash,
+        "first_name": new_user.first_name,
+        "last_name": new_user.last_name,
+        "role": new_user.role,
+        "position": new_user.designation_name,
+        "field": new_user.industry_field,
+        "organization": new_user.organization,
+        "years_experience": new_user.years_experience,
+        "education": new_user.education,
+        "current_assignment": new_user.current_assignment,
+        "career_goal": new_user.career_goal,
+        "preferred_learning_style": new_user.preferred_learning_style,
+        "weekly_hours": new_user.weekly_hours,
+        "current_project_focus": new_user.current_project_focus,
+        "preferred_language": new_user.preferred_language,
+        "status": new_user.status,
+        "ai_profile": ai_profile
+    }
+    access_token = create_access_token(subject=new_user.id, role=new_user.role, user_data=user_data)
     log_audit_event(db, action="REGISTER_DYNAMIC", resource="User", actor_id=new_user.id, actor_email=new_user.email)
 
     return TokenResponse(
