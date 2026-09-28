@@ -1,7 +1,0 @@
-__pycache__/
-*.py[cod]
-*.class
-.venv/
-venv/
-stat_skills.db
-.env
