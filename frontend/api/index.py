@@ -1,16 +1,18 @@
 import sys
 import os
 
-# Configure paths so backend modules can be imported smoothly on Vercel
+# Resolve paths so that backend/app modules can be imported smoothly on Vercel
 current_dir = os.path.dirname(os.path.abspath(__file__))
-frontend_dir = os.path.dirname(current_dir)
-backend_dir = os.path.join(frontend_dir, "backend")
-parent_backend_dir = os.path.join(os.path.dirname(frontend_dir), "backend")
+root_dir = os.path.dirname(current_dir)
+backend_dir = os.path.join(root_dir, "backend")
+parent_backend_dir = os.path.join(os.path.dirname(root_dir), "backend")
+grandparent_backend_dir = os.path.join(os.path.dirname(os.path.dirname(root_dir)), "backend")
 
-for p in [backend_dir, parent_backend_dir, current_dir, frontend_dir]:
-    if os.path.exists(p) and p not in sys.path:
-        sys.path.insert(0, p)
+for path in [backend_dir, parent_backend_dir, grandparent_backend_dir, root_dir]:
+    if os.path.exists(path) and path not in sys.path:
+        sys.path.insert(0, path)
 
+# Import the configured FastAPI application instance
 try:
     from app.main import app
 except ImportError:

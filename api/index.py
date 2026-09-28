@@ -5,8 +5,10 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(current_dir)
 backend_dir = os.path.join(root_dir, "backend")
+frontend_backend_dir = os.path.join(root_dir, "frontend", "backend")
+parent_backend_dir = os.path.join(os.path.dirname(root_dir), "backend")
 
-for path in [backend_dir, root_dir]:
+for path in [backend_dir, frontend_backend_dir, parent_backend_dir, root_dir]:
     if os.path.exists(path) and path not in sys.path:
         sys.path.insert(0, path)
 

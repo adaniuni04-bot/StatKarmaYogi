@@ -60,16 +60,24 @@ app.add_middleware(
 
 @app.middleware("http")
 async def vercel_path_rewrite_middleware(request: Request, call_next):
-    matched_path = (
-        request.headers.get("x-matched-path")
-        or request.headers.get("x-vercel-matched-path")
-        or request.headers.get("x-forwarded-uri")
-        or request.headers.get("x-original-uri")
-    )
-    if matched_path:
-        clean_path = matched_path.split("?")[0]
-        if request.scope.get("path") in ["/api/index.py", "/api/index", "/api", "/api/"]:
-            request.scope["path"] = clean_path
+    q_path = request.query_params.get("__path")
+    if q_path:
+        clean = q_path.split("?")[0].strip("/")
+        if clean.startswith("api/"):
+            request.scope["path"] = f"/{clean}"
+        else:
+            request.scope["path"] = f"/api/{clean}"
+    else:
+        matched_path = (
+            request.headers.get("x-matched-path")
+            or request.headers.get("x-vercel-matched-path")
+            or request.headers.get("x-forwarded-uri")
+            or request.headers.get("x-original-uri")
+        )
+        if matched_path:
+            clean_path = matched_path.split("?")[0]
+            if request.scope.get("path") in ["/api/index.py", "/api/index", "/api", "/api/"]:
+                request.scope["path"] = clean_path
     return await call_next(request)
 
 
